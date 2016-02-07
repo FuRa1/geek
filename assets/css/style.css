@@ -1,0 +1,58 @@
+.body{
+    font-family: Arial,sans-serif;
+}
+.wrapper {
+    width: 320px;
+    background-color: white;
+    border: 1px solid lightgray;
+    background-image: url(../img/LoginPage.png);
+}
+
+.row {
+    opacity: 0.5;
+}
+
+.glyphicon-fire {
+    color: #fb57ff;
+}
+.glyphicon-arrow-right{
+    font-size: .75em;
+}
+.col-xs-2 .glyphicon {
+    font-size: 2.625em;
+    margin-top: -.1em;
+    padding-left: .1em;
+}
+
+.col-xs-4 {
+    padding-left: .3em;
+}
+
+.col-xs-8 {
+    padding-left: 1.75em;
+    padding-right: 1.6em;
+}
+
+.action {
+    margin-top: 2em;
+    margin-bottom: 1.75em;
+}
+
+.action p {
+    font-size: 1.5em;
+}
+
+input {
+    margin-bottom: 1.7em;
+}
+
+.form-control {
+    padding: .7em .6em .3em .6em;
+    font-size: .75em;
+}
+.btn{
+    border-radius: 2.125em;
+    width: 6.4em;
+    margin-left: 3.4em;
+    color: #23527c;
+}

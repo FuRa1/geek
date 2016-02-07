@@ -1,0 +1,29 @@
+{
+  "name": "sigma-test",
+  "description": "test task for sigma",
+  "main": "index.html",
+  "authors": [
+    "Boris"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "sigma",
+    "test",
+    "task"
+  ],
+  "homepage": "https://github.com/FuRa1/sigma",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0",
+    "bootstrap": "~3.3.6",
+    "angular-mocks": "~1.4.9",
+    "angular": "angularjs#~1.4.9"
+  }
+}

@@ -1,0 +1,35 @@
+<div ng-app="loginCtrl">
+    <div class="row action">
+        <div class="col-xs-3">
+        </div>
+        <div class="col-xs-2">
+            <span class="glyphicon glyphicon-fire"></span>
+        </div>
+        <div class="col-xs-4">
+            <p>Login</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-2"></div>
+        <form  ng-submit="submit()">
+            <fieldset class="form-group col-xs-8">
+                <input type="text" class="form-control" id="loginInput" placeholder="Login" ng-model="login">
+                <input type="password" class="form-control" id="passwordInput" placeholder="Password" ng-model="password">
+                    <button type="submit" id="myButton" data-loading-text="<i class='icon-spinner icon-spin icon-large'></i>" class="btn btn-default" autocomplete="off">
+                        Login  <span class="glyphicon glyphicon-arrow-right"></span>
+                    </button>
+
+
+                <!--
+                <button type="button"
+                        class="btn btn-primary start"
+                        id="btnStartUploads"
+                        data-loading-text="<i class='icon-spinner icon-spin icon-large'></i> @Localization.Uploading">
+                    <i class="icon-upload icon-large"></i>
+                    <span>@Localization.StartUpload</span>
+                </button>
+                -->
+            </fieldset>
+        </form>
+    </div>
+</div>
