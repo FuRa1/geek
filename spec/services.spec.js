@@ -1,12 +1,12 @@
-describe('parserTest', function () {
-    var parser;
+describe('servicesTest', function () {
+    var services;
 
     beforeEach(function () {
         module('testApp');
     });
 
     beforeEach(inject(function ($injector) {
-        parser = $injector.get('parser');
+        parser = $injector.get('services');
     }));
 
     it('is there are no palindromes, should return an empty array', function () {

@@ -2,7 +2,8 @@
     'use strict';
     angular.module('testApp', [
         'ui.router',
-        'testAppControllers'
+        'testAppControllers',
+        'ui.bootstrap'
     ])
         .config(function ($httpProvider) {
             delete $httpProvider.defaults.headers.common['X-Requested-With'];
@@ -12,11 +13,19 @@
 
             $stateProvider
                 .state('authentication', {
-                    url: "/authentication",
-                    templateUrl: "./partials/authentication.html",
-                    controller: 'loginCtrl'
-                })
-                .state('success', {
+                    url: '/authentication',
+                    views: {
+                            'title': {templateUrl: './partials/title-login.html'},
+                            'form': {
+                                templateUrl: './partials/authentication.html',
+                                controller: 'loginCtrl',
+                                controllerAs: 'lg'
+                            }
+                    }
+
+                });
+                /*
+                .state('action', {
                     url: "/success",
                     templateUrl: "./partials/success.html"
 
@@ -27,7 +36,7 @@
                     templateUrl: "./partials/HOTP.html",
                     controller: 'hotpCtrl'
                 });
-
+*/
             $urlRouterProvider.otherwise('/authentication');
         });
 })();

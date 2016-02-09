@@ -1,58 +1,72 @@
-.body{
-    font-family: Arial,sans-serif;
+.body {
+    font-family: Arial, sans-serif;
 }
+
 .wrapper {
-    width: 320px;
     background-color: white;
-    border: 1px solid lightgray;
-    background-image: url(../img/LoginPage.png);
+    /*  background-image: url(../img/LoginPage.png); */
+    margin-left: -1px;
 }
 
 .row {
-    opacity: 0.5;
+}
+
+.glyphicon-ok {
+    color: rgb(92, 184, 92);
+    font-size: 2.5em;
+    vertical-align: middle;
 }
 
 .glyphicon-fire {
-    color: #fb57ff;
+    color: rgb(240, 173, 78);
+    font-size: 2.5em;
+    vertical-align: middle;
 }
-.glyphicon-arrow-right{
+
+.glyphicon-arrow-right {
     font-size: .75em;
-}
-.col-xs-2 .glyphicon {
-    font-size: 2.625em;
-    margin-top: -.1em;
-    padding-left: .1em;
-}
-
-.col-xs-4 {
-    padding-left: .3em;
-}
-
-.col-xs-8 {
-    padding-left: 1.75em;
-    padding-right: 1.6em;
 }
 
 .action {
-    margin-top: 2em;
-    margin-bottom: 1.75em;
+    margin-top: 1.85em;
+    margin-bottom: 31px;
+    text-align: center;
+    margin-left: -20px;
 }
 
-.action p {
+.action .title {
+    display: inline-block;
     font-size: 1.5em;
+    vertical-align: middle;
 }
 
 input {
-    margin-bottom: 1.7em;
+    margin-bottom: 18px;
 }
 
 .form-control {
-    padding: .7em .6em .3em .6em;
-    font-size: .75em;
+    width: 186px;
+    padding: 8px 8px 2px 7px;
+    font-size: .7em;
+    border-radius: .5em;
+
 }
-.btn{
+
+.error {
+    border-color: #a94442;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+
+.btn-wrapper {
+    margin: 0 auto;
+    align-content: center;
+}
+
+.btn {
+    padding: 7px 8px 5px 0;
     border-radius: 2.125em;
     width: 6.4em;
-    margin-left: 3.4em;
     color: #23527c;
+    margin-bottom: 20px;
 }

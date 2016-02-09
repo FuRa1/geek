@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/spin.css" rel="stylesheet">
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-mocks/angular-mocks.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
     <script src="js/page.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="js/app.js"></script>
@@ -17,13 +19,9 @@
     <title>Geek Test</title>
 </head>
 <body ng-app="testApp">
-
-<div>
-    <a href="#success">Success</a>
-    <a href="#HOTP">HOTP</a>
-</div>
 <div class="wrapper">
-        <div ui-view></div>
+    <div ui-view="title"></div>
+    <div ui-view="form"></div>
 </div>
 
 </body>

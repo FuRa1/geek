@@ -27,7 +27,7 @@
                 },
                 data: parameter
             }).then(function successCallback(response) {
-                console.log(response);
+                return response;
                 // this callback will be called asynchronously
                 // when the response is available
             }, function errorCallback(response) {

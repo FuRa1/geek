@@ -5,21 +5,34 @@
         .controller('hotpCtrl', hotpCtrl);
 
 
-    loginCtrl.$inject = ['$scope', 'services'];
-    hotpCtrl.$inject = ['$scope', 'services'];
+    loginCtrl.$inject = ['services'];
+    hotpCtrl.$inject = ['services'];
 
-    function loginCtrl($scope, services) {
+    function loginCtrl (services) {
 
-        $scope.submit = submit;
+        this.submit = submit;
 
-        function submit(){
-            console.log($scope.login, $scope.password);
-            services.httpPostRequest($scope.login, $scope.password)
+        function submit() {
+            services.httpPostRequest(this.login, this.password)
+                .then(function (res) {
+                    var data = res.data;
+                    if (data.Auth === "Denied") {
+                        this.denied = true;
+                    }
+                    if (data.Auth === "Logged") {
+                        document.location.href = '#/success';
+                    }
+
+                }).catch(function (e) {
+                    console.log(e);
+                })
+
+
         }
 
     }
 
-    function hotpCtrl($scope, services) {
+    function hotpCtrl(services) {
 
     }
 

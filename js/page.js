@@ -1,3 +1,3 @@
-(function () {
+$(function () {
     document.location.href = '#/authentication';
 });
