@@ -1,7 +1,17 @@
-<div ng-app="hotpCtrl">
-    <div class="row">
-        <div class="col-xs-12">
-            <input type="text" name="password" value="password">
+<div class="row center-block">
+    <form ng-submit="ht.submit()" class="col-xs-12">
+        <div class="form-group">
+            <input type="text" ng-class="{'error': ht.denied }" class="form-control center-block" id="loginInput"
+                   placeholder="Enter two step auth code"
+                   ng-model="lg.hotp" ng-click="ht.denied=false">
         </div>
-    </div>
+        <button type="submit" id="myButton" ng-disabled="ht.banned"
+                login-Button="{{ht.buttonContent}}"
+                Login="Login &#8594"
+                Hotp="Continue &#8594"
+                Loading="<span class='glyphicon glyphicon-cog gly-spin'></span>"
+                class="btn btn-default center-block">
+        </button>
+        <logger-Button></logger-Button>
+    </form>
 </div>
