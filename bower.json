@@ -25,7 +25,8 @@
     "bootstrap": "~3.3.6",
     "angular-mocks": "~1.5",
     "angular": "angularjs#~1.5",
-    "angular-ui-router": "~0.2.18"
+    "angular-ui-router": "~0.2.18",
+    "lodash": "latest"
 
   }
 }

@@ -2,19 +2,6 @@ describe('testApp/authentication', function () {
 
     var $httpBackend, createController, authRequestHandler, LoginFactory;
 
-    var url = 'https://93.183.203.13:10443/login';
-
-    var parameter = JSON.stringify({Login: 'SomeLogin', Password: 'SomePassword'});
-    var req = {
-        method: 'POST',
-        url: url,
-        dataType: "json",
-        data: parameter,
-        headers: {
-            'Content-Type': JSON,
-            'Access-Control-Allow-Origin': "*"
-        }
-    };
 
     beforeEach(module('testApp'));
 
@@ -26,7 +13,7 @@ describe('testApp/authentication', function () {
 
         var $controller = $injector.get('$controller');
 
-        authRequestHandler = $httpBackend.when('POST', url)
+        authRequestHandler = $httpBackend.when('POST', 'https://93.183.203.13:10443/login')
             .respond(200, {'data':{'Auth':'Denied'}});
 
         createController = function () {
@@ -34,12 +21,24 @@ describe('testApp/authentication', function () {
         };
     }));
 
-    it('should return "Auth:dined" response ', function () {
+    it('should return "Auth:denied" response ', function () {
 
-        $httpBackend.expectPOST(req).respond();
-        var data = respond.data;
 
-        expect(data[Auth]).toBe("Denied");
+        var login = 'WrongLogin';
+        var password = 'WrongPassword';
+        var data;
+
+        $httpBackend.expectPOST('https://93.183.203.13:10443/login').respond(200, {Auth:'Denied'});
+
+        LoginFactory(login,password).then(function(res){
+            data = res.data;
+            expect(data.Auth).toBe('Denied');
+
+        });
+
+        $httpBackend.flush();
+
+
     });
 
 });
