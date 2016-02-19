@@ -1,130 +1,75 @@
 (function () {
     angular
         .module('testAppControllers', [])
-        .controller('loginCtrl', loginCtrl)
-        .controller('hotpCtrl', hotpCtrl);
+        .controller('loginCtrl', loginCtrl);
 
 
-    loginCtrl.$inject = ['logger','$state'];
-    loginCtrl.$inject = ['logger','$state'];
+    loginCtrl.$inject = ['Login','$state'];   //inject Login Factory and state route.
 
 
-    function loginCtrl(logger, state) {
+    function loginCtrl(Login, state) {
+
 
         var vm = this;
 
+        vm.submit = submit;         //form ng-submit call submit() function when button type submit clicked.
 
-        vm.submit = submit;
-        vm.banned = false;
 
-        (function(){
-            vm.buttonContent = 'Login';
-        })();
+        callbacksMethods={                           //Obj methods depending on response data.
+            Logged: function(){
+                state.transitionTo('success', {});   // if response Auth:'Logged', go to state Success.
+            },
+            Banned: function (data) {                //if response Auth:'Banned', disable login button for time in response Time:'sec'.
+                vm.isBanned = true;
+                var time = parseFloat(data.Time) * 1000;
+                setTimeout(function () {
+                    vm.isBanned = false;
+                }, time)
+            },
+            Denied: function () {
+                vm.denied = true;                    //if response Auth:'Denied', mark login field to red, util user type new data.
+
+
+            },
+            HotpRequired: function () {
+                state.transitionTo('hotp', {});     //if response Auth:'HOTP required', go to state hotp.
+            },
+            HotpWrongCode: function(){
+                vm.denied = true;                   //if response Auth:'HOTP wrong code', mark hotp pass field to red, util user type new data.
+            }
+
+
+        };
+
 
 
         function submit() {
 
             var log = vm.login;
             var pass = vm.password;
+            var htop = vm.hotp;
 
-            if(!log || !pass){
-                vm.denied = true;
-                return
-            }
+            vm.isLoading = true;                    //when submit starts, push true into button directive isLoading attr,
+                                                    // that will change button text for loading state
 
-            vm.buttonContent = 'Loading';
-
-            logger.http(log, pass, false)
+            Login(log, pass, htop)                  //start $http request form Factory Login.
                 .then(function (res) {
 
-                    vm.buttonContent = 'Login';
+                    vm.isLoading = false;           //push false into button directive isLoading, when response return.
 
                     var data = res.data;
+                    var responseType = _.camelCase(data.Auth);   //restrict Auth: 'value' to CamelCase for  callbacksMethods Object
 
-                    console.log(data.Auth);
-                    if (data.Auth === "Denied") {
+                    console.log(responseType);
 
-                        vm.denied = true;
+                    callbacksMethods[responseType](data);       //run callbacksMethods method depending on response Auth:'value'
 
-                        state.transitionTo('hotp', {});
-
-                    }
-                    if (data.Auth === "Logged") {
-
-                        state.transitionTo('success', {});
-
-
-                    }
-                    if (data.Auth === "HOTP required") {
-
-                        state.transitionTo('hotp', {});
-
-                    }
-                    if (data.Auth === "Banned") {
-                        vm.banned = true;
-                        var time = parseFloat(data.Time) * 1000;
-                        setTimeout(function () {
-                            vm.banned = false;
-                        }, time)
-                    }
-
-                }).catch(function (e) {
+                })
+                .catch(function (e) {
                     console.log(e);
                 })
-
-
         }
 
-    }
-
-    function hotpCtrl(logger){
-        var vm = this;
-
-
-        vm.submit = submit;
-        vm.banned = false;
-
-        (function(){
-            vm.buttonContent = 'Hotp';
-        })();
-
-        function submit() {
-
-            var hotp = vm.hotp ? vm.hotp : false;
-
-            vm.buttonContent = 'Loading';
-
-            logger.http(false, false, hotp)
-                .then(function (res) {
-                    var data = res.data;
-
-                    vm.buttonContent = 'Hotp';
-
-                    if (data.Auth === "HOTP wrong code") {
-
-                        vm.denied = true;
-                    }
-
-                    if (data.Auth === "Logged") {
-
-                        state.transitionTo('success', {});
-
-                    }
-
-                    if (data.Auth === "Banned") {
-                        vm.banned = true;
-                        var time = parseFloat(data.Time) * 1000;
-                        setTimeout(function () {
-                            vm.banned = false;
-                        }, time)
-                    }
-
-                }).catch(function (e) {
-                    console.log(e);
-                })
-
-
-        }
 
     }
 

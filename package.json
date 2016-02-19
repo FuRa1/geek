@@ -1,7 +1,7 @@
 {
-  "name": "sigma-test",
+  "name": "geek-test",
   "version": "1.0.0",
-  "description": "test task for sigma",
+  "description": "test task for geek's team",
   "main": "index.html",
   "dependencies": {
     "jasmine": "^2.4.1",
@@ -18,7 +18,6 @@
     "karma-jasmine": "^0.3.6",
     "karma-jasmine-matchers": "^2.0.0-beta2",
     "karma-junit-reporter": "^0.2.2",
-    "karma-phantomjs2-launcher": "^0.4.0",
     "shelljs": "^0.2.6"
   },
   "scripts": {
@@ -30,19 +29,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FuRa1/sigma.git"
+    "url": "git+https://github.com/FuRa1/geek.git"
   },
   "keywords": [
-    "sigma",
+    "geek",
     "test",
     "task"
   ],
   "author": "Boris",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/FuRa1/sigma/issues"
+    "url": "https://github.com/FuRa1/geek/issues"
   },
-  "homepage": "https://github.com/FuRa1/sigma#readme",
+  "homepage": "https://github.com/FuRa1/geek#readme",
   "directories": {
     "test": "test"
   }

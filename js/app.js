@@ -3,11 +3,10 @@
     angular
         .module('testApp', [
             'ui.router',
-            'testAppControllers',
-            'ui.bootstrap',
-            'ngResource'
+            'testAppControllers'
         ])
         .config(config);
+
 
     function config($stateProvider, $urlRouterProvider) {
 
@@ -30,7 +29,7 @@
                     'title': {templateUrl: './partials/title-login.html'},
                     'form': {
                         templateUrl: './partials/hotp.html',
-                        controller: 'hotpCtrl',
+                        controller: 'loginCtrl',
                         controllerAs: 'ht'
                     }
                 }
@@ -40,7 +39,6 @@
                 url: '/success',
                 views: {
                     'title': {templateUrl: './partials/title-success.html'},
-                    'form': {templateUrl: ''}
                 }
 
             });

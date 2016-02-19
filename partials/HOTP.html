@@ -1,17 +1,22 @@
 <div class="row center-block">
+    <div class="col-xs-12 info">
+        <P>
+        Two step authentication required <br>
+        for this user login:
+        </P>
+    </div>
+</div>
+<div class="row center-block">
     <form ng-submit="ht.submit()" class="col-xs-12">
         <div class="form-group">
             <input type="text" ng-class="{'error': ht.denied }" class="form-control center-block" id="loginInput"
                    placeholder="Enter two step auth code"
-                   ng-model="lg.hotp" ng-click="ht.denied=false">
+                   ng-model="ht.hotp" ng-click="ht.denied=false">
         </div>
-        <button type="submit" id="myButton" ng-disabled="ht.banned"
-                login-Button="{{ht.buttonContent}}"
-                Login="Login &#8594"
-                Hotp="Continue &#8594"
-                Loading="<span class='glyphicon glyphicon-cog gly-spin'></span>"
-                class="btn btn-default center-block">
-        </button>
-        <logger-Button></logger-Button>
+        <loading-button
+                is-loading='ht.isLoading'
+                is-banned='ht.isBanned'
+                button-text='"Continue &#8594"'>
+        </loading-button>
     </form>
 </div>

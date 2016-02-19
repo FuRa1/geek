@@ -1,20 +1,20 @@
 .body {
     font-family: Arial, sans-serif;
+
 }
 
 .wrapper {
     background-color: white;
-    /*  background-image: url(../img/LoginPage.png); */
-    margin-left: -1px;
+    background-repeat: no-repeat;
+    min-width: 320px;
 }
 
-.row {
-}
 
 .glyphicon-ok {
     color: rgb(92, 184, 92);
     font-size: 2.5em;
     vertical-align: middle;
+    padding-right: .35em;
 }
 
 .glyphicon-fire {
@@ -23,15 +23,12 @@
     vertical-align: middle;
 }
 
-.glyphicon-arrow-right {
-    font-size: .75em;
-}
 
 .action {
-    margin-top: 1.85em;
-    margin-bottom: 31px;
+    margin-top: 1.8em;
+    margin-bottom: 2.25em;
     text-align: center;
-    margin-left: -20px;
+    margin-left: -1.35em;
 }
 
 .action .title {
@@ -64,9 +61,21 @@ input {
 }
 
 .btn {
-    padding: 7px 8px 5px 0;
     border-radius: 2.125em;
-    width: 6.4em;
-    color: #23527c;
+    height: 2.5em;
+    min-width: 6.4em;
+    padding-left: 1.25em;
+    padding-right: 1.25em;
+    color: rgb(66,139,202);
     margin-bottom: 20px;
+}
+.gly-spin{
+    font-size: 1.5em;
+}
+
+.info{
+    text-align: center;
+    margin-top: 0.35em;
+    font-size: .9em;
+    margin-bottom: .2em;
 }
