@@ -1,44 +1,90 @@
-describe('testApp/authentication', function () {
+describe('testApp', function () {
 
-    var $httpBackend, createController, authRequestHandler, LoginFactory;
+    var httpBackend, loginFactory, scope, $controller, createController, state, serverUrl;
 
+    serverUrl = 'https://93.183.203.13:10443/login'
 
     beforeEach(module('testApp'));
 
-    beforeEach(inject(function ($injector) {
-
-        $httpBackend = $injector.get('$httpBackend');
-
-        LoginFactory = $injector.get('Login');
-
-        var $controller = $injector.get('$controller');
-
-        authRequestHandler = $httpBackend.when('POST', 'https://93.183.203.13:10443/login')
-            .respond(200, {'data':{'Auth':'Denied'}});
-
-        createController = function () {
-            return $controller('loginCtrl', {'Login': LoginFactory});
-        };
+    beforeEach(module(function($urlRouterProvider) {
+        $urlRouterProvider.deferIntercept();
     }));
 
-    it('should return "Auth:denied" response ', function () {
+    beforeEach(inject(function ($injector) {
+        q = $injector.get('$q');
+        httpBackend = $injector.get('$httpBackend');
+        loginFactory = $injector.get('Login');
+        $controller = $injector.get('$controller');
+        scope = $injector.get('$rootScope').$new();
+        state = $injector.get('$state');
+
+        createController = function() {
+                return $controller('loginCtrl');
+            };
+
+    }));
+
+    afterEach(function() {
+        console.log("-----------------------------------------------");
+        httpBackend.verifyNoOutstandingExpectation();
+        httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('should return "Auth:Logged" response, and get template for /success/ state', function () {
 
 
-        var login = 'WrongLogin';
-        var password = 'WrongPassword';
-        var data;
+        var controller = createController();
 
-        $httpBackend.expectPOST('https://93.183.203.13:10443/login').respond(200, {Auth:'Denied'});
+        httpBackend.expectPOST(serverUrl).respond(200, {Auth:'Logged'});
 
-        LoginFactory(login,password).then(function(res){
-            data = res.data;
-            expect(data.Auth).toBe('Denied');
+        controller.login = 'CorrectLogin';
+        controller.password = 'CorrectLogin';
 
-        });
+        (controller.submit)();
 
-        $httpBackend.flush();
+        httpBackend.expectGET('./partials/title-success.html').respond(200, "State was changed");
 
+        httpBackend.flush();
 
     });
 
+    it('should return "Auth:HOTP required" response, and get template for /hotp/ state', function () {
+
+
+        var controller = createController();
+
+        httpBackend.expectPOST(serverUrl).respond(200, {Auth:'HOTP required'});
+
+        controller.login = 'CorrectLogin';
+        controller.password = 'CorrectPassword';
+
+        (controller.submit)();
+
+        httpBackend.expectGET('./partials/title-login.html').respond(200);
+        httpBackend.expectGET('./partials/hotp.html').respond(200);
+
+        httpBackend.flush();
+
+    });
+
+    it('should return "Auth:HOTP wrong code" response, and get mark input as "Error" class (Denied to be True)', function () {
+
+
+        var controller = createController();
+
+        httpBackend.expectPOST(serverUrl).respond(200, {Auth:'HOTP wrong code'});
+
+        controller.login = 'CorrectLogin';
+        controller.password = 'CorrectPassword';
+        controller.hotp = 'WrongCode';
+
+
+        controller.submit().then(function(data){
+            expect(controller.denied).toBe(true);
+
+        });
+
+        httpBackend.flush();
+
+    });
 });

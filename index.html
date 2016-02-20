@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="./bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
@@ -18,11 +18,9 @@
     <title>Geek Test</title>
 </head>
 <body ng-app="testApp">
-<a href="#hotp">hotp</a><a href="#authentication">authentication</a><a href="#success">success</a>
-
 <div class="wrapper">
-    <div ui-view="title"></div>
-    <div ui-view="form"></div>
+    <header ui-view="title"></header>
+    <main ui-view="form"></main>
 </div>
 </body>
 </html>
