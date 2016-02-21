@@ -38,12 +38,12 @@
             .state('success', {
                 url: '/success',
                 views: {
-                    'title': {templateUrl: './partials/title-success.html'},
+                    'title': {templateUrl: './partials/title-success.html'}
                 }
 
             });
         $urlRouterProvider.otherwise('/authentication');
-    };
+    }
 })();
 
 

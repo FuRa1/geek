@@ -1,6 +1,6 @@
 describe('testApp', function () {
 
-    var httpBackend, loginFactory, scope, $controller, createController, state, serverUrl;
+    var httpBackend, loginFactory, scope, $controller, createController, serverUrl;
 
     serverUrl = 'https://93.183.203.13:10443/login';
 
@@ -11,12 +11,10 @@ describe('testApp', function () {
     }));
 
     beforeEach(inject(function ($injector) {
-        q = $injector.get('$q');
         httpBackend = $injector.get('$httpBackend');
         loginFactory = $injector.get('Login');
         $controller = $injector.get('$controller');
         scope = $injector.get('$rootScope').$new();
-        state = $injector.get('$state');
 
         createController = function() {
                 return $controller('loginCtrl');
@@ -40,9 +38,11 @@ describe('testApp', function () {
         controller.login = 'CorrectLogin';
         controller.password = 'CorrectLogin';
 
-        (controller.submit)();
+        controller.submit();
 
         httpBackend.expectGET('./partials/title-success.html').respond(200, "State was changed");
+
+        // expect GET request by router for template to state /success
 
         httpBackend.flush();
 
@@ -58,10 +58,10 @@ describe('testApp', function () {
         controller.login = 'CorrectLogin';
         controller.password = 'CorrectPassword';
 
-        (controller.submit)();
+        controller.submit();
 
-        httpBackend.expectGET('./partials/title-login.html').respond(200);
-        httpBackend.expectGET('./partials/hotp.html').respond(200);
+        httpBackend.expectGET('./partials/title-login.html').respond(200);   // expect GET request by router for
+        httpBackend.expectGET('./partials/hotp.html').respond(200);          // templates to sate /hotp
 
         httpBackend.flush();
 
@@ -78,17 +78,15 @@ describe('testApp', function () {
         controller.password = 'CorrectPassword';
         controller.hotp = 'WrongCode';
 
-
         controller.submit().then(function(data){
             expect(controller.denied).toBe(true);
-
         });
 
         httpBackend.flush();
 
     });
 
-    it('should return Auth:"Banned" response, then disable button for 10 sec (isBanned Denied to be true)', function () {
+    it('should return Auth:"Banned" response, then disable button for 10 sec ("isBanned" to be true)', function () {
 
 
         var controller = createController();
@@ -98,10 +96,8 @@ describe('testApp', function () {
         controller.login = 'SomeLogin';
         controller.password = 'SomePassword';
 
-
         controller.submit().then(function(data){
             expect(controller.isBanned).toBe(true);
-
         });
 
         httpBackend.flush();

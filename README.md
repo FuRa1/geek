@@ -13,9 +13,9 @@ to run unit test - execute following command at the root folder
 npm test
 ```
 ### Test descriptions:
-Test 1 verifies that when respond content is {'Auth':'Logged'}, webApp will move to `\success` state  with correct template.
+Test 1 verifies that when respond content is {'Auth':'Logged'}, webApp will move to next state with correct template.
 
-Test 2 verifies that when respond content is {'Auth':'HOTP required'}, webApp will move to `\hotp` state  with correct template.
+Test 2 verifies that when respond content is {'Auth':'HOTP required'}, webApp will move to next with correct template.
 
 Test 3 verifies that when respond content is {'Auth':'HOTP wrong code'}, webApp will mark input in red by adding `Error` class.
 
