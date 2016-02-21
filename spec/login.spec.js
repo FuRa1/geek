@@ -2,7 +2,7 @@ describe('testApp', function () {
 
     var httpBackend, loginFactory, scope, $controller, createController, state, serverUrl;
 
-    serverUrl = 'https://93.183.203.13:10443/login'
+    serverUrl = 'https://93.183.203.13:10443/login';
 
     beforeEach(module('testApp'));
 
@@ -35,7 +35,7 @@ describe('testApp', function () {
 
         var controller = createController();
 
-        httpBackend.expectPOST(serverUrl).respond(200, {Auth:'Logged'});
+        httpBackend.expectPOST(serverUrl).respond(200, {'Auth':'Logged'});
 
         controller.login = 'CorrectLogin';
         controller.password = 'CorrectLogin';
@@ -53,7 +53,7 @@ describe('testApp', function () {
 
         var controller = createController();
 
-        httpBackend.expectPOST(serverUrl).respond(200, {Auth:'HOTP required'});
+        httpBackend.expectPOST(serverUrl).respond(200, {'Auth':'HOTP required'});
 
         controller.login = 'CorrectLogin';
         controller.password = 'CorrectPassword';
@@ -72,7 +72,7 @@ describe('testApp', function () {
 
         var controller = createController();
 
-        httpBackend.expectPOST(serverUrl).respond(200, {Auth:'HOTP wrong code'});
+        httpBackend.expectPOST(serverUrl).respond(200, {'Auth':'HOTP wrong code'});
 
         controller.login = 'CorrectLogin';
         controller.password = 'CorrectPassword';
@@ -88,12 +88,12 @@ describe('testApp', function () {
 
     });
 
-    it('should return Auth:"Banned" response, then disable button for Time:xxx (isBanned Denied to be true)', function () {
+    it('should return Auth:"Banned" response, then disable button for 10 sec (isBanned Denied to be true)', function () {
 
 
         var controller = createController();
 
-        httpBackend.expectPOST(serverUrl).respond(200, {Auth:'Banned',Time:'10'});
+        httpBackend.expectPOST(serverUrl).respond(200, {'Auth':'Banned','Time':'10'});
 
         controller.login = 'SomeLogin';
         controller.password = 'SomePassword';

@@ -10,7 +10,7 @@ module.exports = function(config){
             './bower_components/angular-ui-router/release/angular-ui-router.min.js',
             './bower_components/lodash/dist/lodash.min.js',
             './js/**/*.js',
-            './spec/log.spec.js'
+            './spec/login.spec.js'
         ],
 
         autoWatch : true,
