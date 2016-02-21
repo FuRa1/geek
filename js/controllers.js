@@ -56,7 +56,7 @@
         }
 
         function logged() {
-            console.log('Success state');
+            console.log('success state');
             state.transitionTo('success', {});   // if response Auth:'Logged', go to state Success.
         }
 

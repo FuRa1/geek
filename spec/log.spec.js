@@ -30,7 +30,7 @@ describe('testApp', function () {
         httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('should return "Auth:Logged" response, and get template for /success/ state', function () {
+    it('should return Auth:"Logged" response, and get template for /success/ state', function () {
 
 
         var controller = createController();
@@ -48,7 +48,7 @@ describe('testApp', function () {
 
     });
 
-    it('should return "Auth:HOTP required" response, and get template for /hotp/ state', function () {
+    it('should return Auth:"HOTP required" response, and get template for /hotp/ state', function () {
 
 
         var controller = createController();
@@ -67,7 +67,7 @@ describe('testApp', function () {
 
     });
 
-    it('should return "Auth:HOTP wrong code" response, and get mark input as "Error" class (Denied to be True)', function () {
+    it('should return Auth:"HOTP wrong code" response, and mark input as "Error" class (Denied to be True)', function () {
 
 
         var controller = createController();
@@ -81,6 +81,26 @@ describe('testApp', function () {
 
         controller.submit().then(function(data){
             expect(controller.denied).toBe(true);
+
+        });
+
+        httpBackend.flush();
+
+    });
+
+    it('should return Auth:"Banned" response, then disable button for Time:xxx (isBanned Denied to be true)', function () {
+
+
+        var controller = createController();
+
+        httpBackend.expectPOST(serverUrl).respond(200, {Auth:'Banned',Time:'10'});
+
+        controller.login = 'SomeLogin';
+        controller.password = 'SomePassword';
+
+
+        controller.submit().then(function(data){
+            expect(controller.isBanned).toBe(true);
 
         });
 
