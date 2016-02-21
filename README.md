@@ -1,6 +1,5 @@
 # Geek task
-This is an angularJS web app, which is made for test task https://github.com/geeksteam/VcFrontendTest
-It sends `POST` request in JSON format to `https://93.183.203.13:10443/login` server.
+This is angularJS based webApp, which was made for test task https://github.com/geeksteam/VcFrontendTest.
 ## Running:
 you will need pre-installed `npm`
 to run application - execute following command at the root folder
