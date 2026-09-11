@@ -1,0 +1,785 @@
+/* ============================================================================
+   UPTIME KUMA — SIGNAL DARK
+   Тёмная тема для страницы статуса. Вставлять в:
+   Status Page → Edit Status Page → Custom CSS.
+
+   HTML не меняется: всё повешено на реальные классы Uptime Kuma
+   (.title-flex, .overall-status, .group-title, .monitor-list, .item,
+   .hp-bar-big .beat, .word, .refresh-info, .btn-info, модалки).
+
+   Цвета — в блоке :root ниже. Меняешь 8 значений — меняется вся тема.
+   ========================================================================= */
+
+:root {
+  /* поверхности */
+  --sd-bg: #080b0a;
+  --sd-panel: #0c110f;
+  --sd-panel-2: #101613;
+  --sd-hover: rgba(53, 208, 127, 0.045);
+
+  /* линии */
+  --sd-line: rgba(120, 220, 170, 0.10);
+  --sd-line-2: rgba(120, 220, 170, 0.20);
+
+  /* текст */
+  --sd-text: #dfe7e2;
+  --sd-text-2: #9fb0a7;
+  --sd-text-3: #6f8078;
+
+  /* сигналы */
+  --sd-up: #35d07f;
+  --sd-up-2: #5ee89f;
+  --sd-up-bg: rgba(53, 208, 127, 0.10);
+  --sd-down: #ff5f6d;
+  --sd-down-bg: rgba(255, 95, 109, 0.10);
+  --sd-warn: #f2b544;
+  --sd-warn-bg: rgba(242, 181, 68, 0.10);
+  --sd-maint: #58a6ff;
+
+  /* типографика */
+  --sd-ui:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --sd-mono:
+    ui-monospace, "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo,
+    Consolas, monospace;
+
+  --sd-radius: 14px;
+  --sd-radius-sm: 8px;
+}
+
+/* ---------- 1. Полотно ---------------------------------------------------- */
+
+html,
+body {
+  background: var(--sd-bg) !important;
+}
+
+body {
+  color: var(--sd-text) !important;
+  font-family: var(--sd-ui) !important;
+  -webkit-font-smoothing: antialiased;
+
+  /* один мягкий источник света сверху, без неона */
+  background:
+    radial-gradient(
+      120% 60% at 50% -10%,
+      rgba(53, 208, 127, 0.055),
+      transparent 60%
+    ),
+    var(--sd-bg) !important;
+  background-attachment: fixed !important;
+}
+
+/* очень слабая сетка — читается как фактура, а не как узор */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(rgba(120, 220, 170, 0.014) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 220, 170, 0.014) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 75%);
+  -webkit-mask-image:
+    radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 75%);
+}
+
+.container,
+.container-fluid {
+  max-width: 940px !important;
+  padding-inline: 20px !important;
+}
+
+.main {
+  padding-block: 8px 0;
+}
+
+p,
+span,
+div,
+label,
+td,
+th {
+  color: inherit;
+}
+
+a {
+  color: var(--sd-text-2);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--sd-up-2);
+}
+
+::selection {
+  background: rgba(53, 208, 127, 0.24);
+  color: #ffffff;
+}
+
+/* ---------- 2. Шапка: логотип + название ---------------------------------- */
+
+h1.title-flex {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-bottom: 22px !important;
+
+  font-family: var(--sd-ui) !important;
+  font-size: clamp(1.6rem, 4vw, 2.1rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+.logo-wrapper {
+  display: inline-flex !important;
+  flex: 0 0 auto;
+}
+
+img.logo {
+  width: 38px !important;
+  height: 38px !important;
+  margin: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 0 0 1px var(--sd-line-2) !important;
+}
+
+/* ---------- 3. Кнопки ------------------------------------------------------ */
+/* .btn-info — это «Edit Status Page» и «Go to Dashboard».
+   По умолчанию они ярко-голубые и выбиваются из тёмной темы.       */
+
+.btn,
+.btn-info,
+.btn-primary,
+.btn-secondary,
+.btn-outline-primary,
+.btn-outline-secondary {
+  padding: 0.5rem 0.9rem !important;
+  border: 1px solid var(--sd-line-2) !important;
+  border-radius: var(--sd-radius-sm) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  font-family: var(--sd-ui) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  color: var(--sd-text-2) !important;
+
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease !important;
+}
+
+.btn:hover,
+.btn-info:hover,
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover {
+  color: var(--sd-up-2) !important;
+  border-color: rgba(94, 232, 159, 0.45) !important;
+  background: var(--sd-up-bg) !important;
+}
+
+.btn:active,
+.btn-info:active,
+.btn-primary:active {
+  transform: translateY(1px);
+  background: rgba(53, 208, 127, 0.16) !important;
+}
+
+.btn:focus-visible,
+.btn-info:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-outline-primary:focus-visible {
+  outline: 2px solid var(--sd-up) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+
+.btn svg {
+  opacity: 0.75;
+  margin-right: 2px;
+}
+
+.btn-danger {
+  border-color: rgba(255, 95, 109, 0.35) !important;
+  color: #ff8f99 !important;
+}
+
+.btn-danger:hover {
+  color: #ffb3ba !important;
+  border-color: rgba(255, 95, 109, 0.6) !important;
+  background: var(--sd-down-bg) !important;
+}
+
+/* ---------- 4. Общий статус ------------------------------------------------ */
+
+.shadow-box.overall-status,
+.overall-status {
+  position: relative;
+  overflow: hidden;
+
+  padding: 18px 22px !important;
+  border: 1px solid var(--sd-line) !important;
+  border-radius: var(--sd-radius) !important;
+  background: var(--sd-panel) !important;
+  box-shadow: none !important;
+}
+
+.overall-status > div {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+
+  font-size: 1.0625rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  color: #ffffff !important;
+}
+
+.overall-status svg {
+  width: 1.15em !important;
+  height: 1.15em !important;
+  flex: 0 0 auto;
+}
+
+/* полоса слева окрашивается по фактическому состоянию */
+.overall-status::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 3px;
+  background: var(--sd-text-3);
+}
+
+.overall-status svg.ok {
+  color: var(--sd-up) !important;
+  filter: drop-shadow(0 0 10px rgba(53, 208, 127, 0.45));
+}
+
+.overall-status svg.warning {
+  color: var(--sd-warn) !important;
+  filter: drop-shadow(0 0 10px rgba(242, 181, 68, 0.4));
+}
+
+.overall-status svg.danger {
+  color: var(--sd-down) !important;
+  filter: drop-shadow(0 0 10px rgba(255, 95, 109, 0.4));
+}
+
+.overall-status:has(svg.ok)::before {
+  background: var(--sd-up);
+}
+
+.overall-status:has(svg.ok) {
+  background:
+    linear-gradient(90deg, var(--sd-up-bg), transparent 42%),
+    var(--sd-panel) !important;
+}
+
+.overall-status:has(svg.warning)::before {
+  background: var(--sd-warn);
+}
+
+.overall-status:has(svg.warning) {
+  background:
+    linear-gradient(90deg, var(--sd-warn-bg), transparent 42%),
+    var(--sd-panel) !important;
+  border-color: rgba(242, 181, 68, 0.28) !important;
+}
+
+.overall-status:has(svg.danger)::before {
+  background: var(--sd-down);
+}
+
+.overall-status:has(svg.danger) {
+  background:
+    linear-gradient(90deg, var(--sd-down-bg), transparent 42%),
+    var(--sd-panel) !important;
+  border-color: rgba(255, 95, 109, 0.3) !important;
+}
+
+/* ---------- 5. Описание страницы (.alert-heading) -------------------------- */
+
+.main > .alert-heading {
+  margin: 0 0 26px !important;
+  padding: 0 !important;
+
+  font-size: 0.875rem !important;
+  color: var(--sd-text-3) !important;
+}
+
+.main > .alert-heading p {
+  margin: 0 !important;
+}
+
+.main > .alert-heading:empty {
+  display: none !important;
+}
+
+/* ---------- 6. ГРУППА ------------------------------------------------------ */
+/* h2.group-title стоит НАД карточкой .shadow-box.monitor-list,
+   поэтому делаем из него подпись-разделитель секции.               */
+
+h2.group-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+
+  margin: 0 0 12px !important;
+
+  font-family: var(--sd-mono) !important;
+  font-size: 0.72rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  color: var(--sd-text-3) !important;
+  text-shadow: none !important;
+}
+
+/* линейка, уходящая в темноту до правого края */
+h2.group-title::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, var(--sd-line-2), transparent);
+}
+
+/* карточка группы */
+.shadow-box.monitor-list,
+.monitor-list.shadow-box {
+  overflow: hidden !important;
+  margin-top: 0 !important;
+
+  /* у .shadow-box в Uptime Kuma есть padding: 10px — из-за него подсветка
+     строки не доходила до краёв карточки */
+  padding: 0 !important;
+
+  border: 1px solid var(--sd-line) !important;
+  border-radius: var(--sd-radius) !important;
+  background: var(--sd-panel) !important;
+  box-shadow: none !important;
+
+  transition: border-color 0.2s ease !important;
+}
+
+/* в группе есть монитор, лежащий прямо сейчас */
+.shadow-box.monitor-list:has(.hp-bar-big > .beat.down:last-child) {
+  border-color: rgba(255, 95, 109, 0.32) !important;
+}
+
+/* группа целиком в норме, но в окне были падения */
+.shadow-box.monitor-list:has(.beat.down):not(
+    :has(.hp-bar-big > .beat.down:last-child)
+  ) {
+  border-color: rgba(242, 181, 68, 0.22) !important;
+}
+
+/* расстояние между группами */
+.mb-5[data-draggable] {
+  margin-bottom: 34px !important;
+}
+
+/* ---------- 7. Строка монитора --------------------------------------------- */
+
+.monitor-list .item {
+  position: relative;
+  padding: 16px 20px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  transition: background 0.15s ease !important;
+}
+
+.monitor-list .item + .item {
+  border-top: 1px solid var(--sd-line) !important;
+}
+
+.monitor-list .item:hover {
+  background: var(--sd-hover) !important;
+}
+
+/* цветная метка состояния слева от строки */
+.monitor-list .item::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 2px;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.monitor-list .item:has(.beat.down)::before {
+  background: rgba(242, 181, 68, 0.55);
+}
+
+.monitor-list .item:has(.hp-bar-big > .beat.down:last-child)::before {
+  background: var(--sd-down);
+}
+
+.monitor-list .item:has(.hp-bar-big > .beat.down:last-child) {
+  background: var(--sd-down-bg) !important;
+}
+
+/* у Bootstrap .row отрицательные внешние отступы — из-за них содержимое
+   строки вылезало на самый край карточки */
+.monitor-list .item .row {
+  align-items: center !important;
+  margin-inline: 0 !important;
+}
+
+/* левая часть: процент + имя */
+.monitor-list .info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 11px !important;
+  min-width: 0;
+}
+
+.monitor-list .item-name {
+  margin: 0 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.005em !important;
+  color: var(--sd-text) !important;
+}
+
+.monitor-list .item:has(.hp-bar-big > .beat.down:last-child) .item-name {
+  color: #ffd2d6 !important;
+}
+
+/* бейдж аптайма */
+.badge.bg-primary,
+.badge.rounded-pill.bg-primary {
+  flex: 0 0 auto;
+  padding: 0.3em 0.6em !important;
+
+  border: 1px solid var(--sd-line-2) !important;
+  border-radius: 999px !important;
+  background: var(--sd-up-bg) !important;
+
+  font-family: var(--sd-mono) !important;
+  font-size: 0.6875rem !important;
+  font-weight: 500 !important;
+  font-variant-numeric: tabular-nums lining-nums !important;
+  letter-spacing: 0 !important;
+  color: var(--sd-up-2) !important;
+}
+
+.monitor-list
+  .item:has(.hp-bar-big > .beat.down:last-child)
+  .badge.bg-primary {
+  border-color: rgba(255, 95, 109, 0.35) !important;
+  background: var(--sd-down-bg) !important;
+  color: #ff9aa3 !important;
+}
+
+.extra-info:empty {
+  display: none !important;
+}
+
+.extra-info {
+  margin-top: 3px !important;
+  font-size: 0.78rem !important;
+  color: var(--sd-text-3) !important;
+}
+
+/* ---------- 8. Пульс ------------------------------------------------------- */
+/* width/margin у .beat заданы инлайном и считаются в JS — не трогаем,
+   иначе разъедется подпись «39m ago». Меняем только высоту и цвет.  */
+
+/* если ударов больше, чем влезает, обрезаем СТАРЫЕ слева:
+   самый правый удар — это «сейчас», он обязан быть виден всегда */
+.monitor-list .wrap {
+  overflow: hidden !important;
+}
+
+.hp-bar-big {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: flex-end !important;
+}
+
+.hp-bar-big .beat {
+  flex: 0 0 auto !important;
+  height: 22px !important;
+  border-radius: 2px !important;
+  background: var(--sd-up) !important;
+  opacity: 0.9;
+  transition: opacity 0.15s ease, transform 0.15s ease !important;
+}
+
+.hp-bar-big .beat:hover {
+  opacity: 1;
+}
+
+.hp-bar-big .beat.empty {
+  background: rgba(120, 220, 170, 0.08) !important;
+  opacity: 1;
+}
+
+.hp-bar-big .beat.down {
+  background: var(--sd-down) !important;
+  opacity: 1;
+}
+
+.hp-bar-big .beat.pending {
+  background: var(--sd-warn) !important;
+}
+
+.hp-bar-big .beat.maintenance {
+  background: var(--sd-maint) !important;
+}
+
+/* последний удар — «сейчас»: единственное место, где разрешено свечение */
+.hp-bar-big > .beat:last-child {
+  box-shadow: 0 0 8px rgba(53, 208, 127, 0.55) !important;
+}
+
+.hp-bar-big > .beat.down:last-child {
+  box-shadow: 0 0 8px rgba(255, 95, 109, 0.6) !important;
+}
+
+.hp-bar-big > .beat.empty:last-child {
+  box-shadow: none !important;
+}
+
+/* подписи «39m ago / now» */
+.word {
+  margin-top: 7px !important;
+
+  font-family: var(--sd-mono) !important;
+  font-size: 0.65rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--sd-text-3) !important;
+}
+
+/* ---------- 9. Обслуживание ------------------------------------------------ */
+
+.bg-maintenance,
+.badge-maintenance,
+.alert.bg-maintenance {
+  border-color: rgba(88, 166, 255, 0.3) !important;
+  border-radius: var(--sd-radius) !important;
+  background: rgba(88, 166, 255, 0.1) !important;
+  color: var(--sd-maint) !important;
+}
+
+/* ---------- 10. Подвал ----------------------------------------------------- */
+
+footer {
+  margin-top: 48px !important;
+  padding-top: 22px !important;
+  border-top: 1px solid var(--sd-line) !important;
+
+  font-size: 0.8125rem !important;
+  color: var(--sd-text-3) !important;
+}
+
+footer p {
+  margin-bottom: 10px !important;
+}
+
+footer a {
+  color: var(--sd-text-2) !important;
+}
+
+footer a:hover {
+  color: var(--sd-up-2) !important;
+}
+
+.refresh-info {
+  font-family: var(--sd-mono) !important;
+  font-size: 0.7rem !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: 0.04em !important;
+  color: var(--sd-text-3) !important;
+  opacity: 0.75;
+}
+
+.custom-footer-text:empty,
+footer .alert-heading:empty {
+  display: none !important;
+}
+
+/* ---------- 11. Модалки и формы -------------------------------------------- */
+
+.modal-content {
+  border: 1px solid var(--sd-line) !important;
+  border-radius: var(--sd-radius) !important;
+  background: var(--sd-panel-2) !important;
+  color: var(--sd-text) !important;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.8) !important;
+}
+
+.modal-header,
+.modal-footer {
+  border-color: var(--sd-line) !important;
+}
+
+.modal-title {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+}
+
+.btn-close {
+  filter: invert(0.85) !important;
+  opacity: 0.55 !important;
+}
+
+.btn-close:hover {
+  opacity: 1 !important;
+}
+
+.form-label {
+  margin-bottom: 0.35rem !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  color: var(--sd-text-2) !important;
+}
+
+.form-text {
+  font-size: 0.78rem !important;
+  color: var(--sd-text-3) !important;
+}
+
+.form-control,
+.form-select,
+input,
+textarea,
+select {
+  border: 1px solid var(--sd-line-2) !important;
+  border-radius: var(--sd-radius-sm) !important;
+  background: var(--sd-bg) !important;
+  color: var(--sd-text) !important;
+  font-family: var(--sd-ui) !important;
+  font-size: 0.875rem !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgba(53, 208, 127, 0.5) !important;
+  background: var(--sd-panel) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(53, 208, 127, 0.12) !important;
+}
+
+::placeholder {
+  color: var(--sd-text-3) !important;
+  opacity: 1 !important;
+}
+
+.form-check-input {
+  border-color: var(--sd-line-2) !important;
+  background-color: var(--sd-bg) !important;
+  accent-color: var(--sd-up) !important;
+}
+
+.form-check-input:checked {
+  border-color: var(--sd-up) !important;
+  background-color: var(--sd-up) !important;
+}
+
+.form-check-label {
+  color: var(--sd-text) !important;
+}
+
+.input-group .btn-outline-primary {
+  border-inline-start: 0 !important;
+}
+
+/* ---------- 12. Полоса прокрутки ------------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--sd-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid var(--sd-bg);
+  border-radius: 999px;
+  background: rgba(120, 220, 170, 0.22);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 220, 170, 0.38);
+}
+
+/* ---------- 13. Телефон ----------------------------------------------------- */
+
+@media (max-width: 770px) {
+  .container,
+  .container-fluid {
+    padding-inline: 14px !important;
+  }
+
+  h1.title-flex {
+    font-size: 1.45rem !important;
+    gap: 11px !important;
+  }
+
+  img.logo {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .monitor-list .item {
+    padding: 13px 14px !important;
+  }
+
+  .monitor-list .item-name {
+    font-size: 0.875rem !important;
+  }
+
+  .hp-bar-big .beat {
+    height: 18px !important;
+  }
+
+  .word {
+    font-size: 0.6rem !important;
+  }
+
+  .overall-status {
+    padding: 15px 17px !important;
+  }
+
+  .overall-status > div {
+    font-size: 0.95rem !important;
+  }
+}
+
+/* ---------- 14. Уважение к настройкам системы ------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
