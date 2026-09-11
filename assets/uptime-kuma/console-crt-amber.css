@@ -1,0 +1,641 @@
+/* ===== UPTIME KUMA — CONSOLE CRT AMBER THEME ===== */
+
+:root {
+  --bg: #0b0906;
+  --bg-soft: #120e08;
+  --panel: #120e08;
+
+  --text: #e8dcc7;
+  --text-strong: #f2e7d5;
+  --text-muted: #9a866a;
+
+  --amber: #f0a63c;
+  --amber-bright: #ffc267;
+  --amber-dim: #c98f2e;
+  --amber-deep: #6b5c47;
+
+  --border: rgba(240, 166, 60, 0.16);
+  --border-strong: rgba(240, 166, 60, 0.38);
+
+  --red: #ff5a4d;
+  --yellow: #e0b355;
+
+  --mono:
+    "IBM Plex Mono",
+    ui-monospace,
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+/* ===== PAGE ===== */
+
+html,
+body {
+  background: #0b0906 !important;
+}
+
+body {
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(240, 166, 60, 0.05),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      #0b0906 0%,
+      #120e08 52%,
+      #0b0906 100%
+    ) !important;
+
+  color: var(--text) !important;
+
+  font-family:
+    "IBM Plex Mono",
+    ui-monospace,
+    Menlo,
+    Consolas,
+    monospace !important;
+
+  letter-spacing: 0.015em;
+}
+
+/* ===== SCANLINES ===== */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+  z-index: -2;
+
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(240, 166, 60, 0.022) 0px,
+      rgba(240, 166, 60, 0.022) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+
+  background-size: auto;
+}
+
+/* ===== WIDTH ===== */
+
+.container,
+.container-fluid {
+  max-width: 1200px !important;
+}
+
+/* ===== NORMAL TEXT ===== */
+
+body,
+p,
+span,
+div,
+td,
+th,
+label {
+  color: var(--text);
+
+  font-family:
+    "IBM Plex Mono",
+    ui-monospace,
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+/* ===== HEADINGS ===== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-strong) !important;
+
+  font-family:
+    "IBM Plex Mono",
+    ui-monospace,
+    Menlo,
+    Consolas,
+    monospace !important;
+
+  font-weight: 600 !important;
+
+  text-transform: uppercase !important;
+
+  letter-spacing: 0.06em !important;
+
+  text-shadow:
+    0 0 8px rgba(240, 166, 60, 0.12);
+}
+
+/* ===== MUTED TEXT ===== */
+
+.text-muted,
+small,
+.description,
+small.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* ===== LINKS ===== */
+
+a {
+  color: var(--text) !important;
+  text-decoration: none !important;
+
+  transition:
+    color 0.15s ease,
+    text-shadow 0.15s ease;
+}
+
+a:hover {
+  color: var(--amber-bright) !important;
+
+  text-shadow:
+    0 0 7px rgba(255, 194, 103, 0.30);
+}
+
+/* ===== CARDS / MONITOR GROUPS ===== */
+
+.card,
+.shadow-box,
+.monitor-list > div,
+.bg-maintenance {
+  background: var(--panel) !important;
+
+  border:
+    1px solid var(--border) !important;
+
+  border-radius: 4px !important;
+
+  box-shadow:
+    0 0 18px rgba(240, 166, 60, 0.03) !important;
+}
+
+/* ===== MONITOR ROWS ===== */
+
+.monitor-list .item,
+.monitor-list > div > div {
+  border-color:
+    rgba(240, 166, 60, 0.22) !important;
+
+  border-style: dotted !important;
+}
+
+.monitor-list .item {
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.monitor-list .item:hover {
+  background:
+    rgba(240, 166, 60, 0.035) !important;
+}
+
+/* ===== UP STATUS ===== */
+
+.bg-up,
+.badge-up,
+.status-up {
+  background:
+    var(--amber) !important;
+
+  color:
+    #0b0906 !important;
+
+  box-shadow:
+    0 0 6px rgba(240, 166, 60, 0.32) !important;
+}
+
+/* ===== DOWN STATUS ===== */
+
+.bg-down,
+.badge-down,
+.status-down {
+  background:
+    var(--red) !important;
+
+  color:
+    #0b0906 !important;
+
+  box-shadow:
+    0 0 6px rgba(255, 90, 77, 0.32) !important;
+}
+
+/* ===== MAINTENANCE ===== */
+
+.bg-maintenance,
+.badge-maintenance {
+  color:
+    var(--yellow) !important;
+}
+
+/* ===== PRIMARY ELEMENTS ===== */
+
+.bg-primary,
+.badge-primary {
+  background:
+    var(--amber-deep) !important;
+
+  color:
+    var(--text-strong) !important;
+}
+
+/* ===== HEARTBEAT BARS ===== */
+
+.hp-bar-big .beat,
+.hp-bar-big .beat.empty {
+  border-radius:
+    0 !important;
+}
+
+.hp-bar-big .beat:not(.empty) {
+  box-shadow:
+    0 0 3px rgba(240, 166, 60, 0.28);
+}
+
+/* ===== BUTTONS ===== */
+
+.btn-primary {
+  background:
+    transparent !important;
+
+  color:
+    var(--amber) !important;
+
+  border:
+    1px solid var(--border-strong) !important;
+
+  border-radius:
+    3px !important;
+
+  font-family:
+    "IBM Plex Mono",
+    ui-monospace,
+    Menlo,
+    Consolas,
+    monospace !important;
+
+  font-size:
+    0.78rem !important;
+
+  text-transform:
+    uppercase !important;
+
+  letter-spacing:
+    0.06em !important;
+
+  box-shadow:
+    none !important;
+
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    text-shadow 0.15s ease;
+}
+
+.btn-primary:hover {
+  background:
+    transparent !important;
+
+  color:
+    var(--amber-bright) !important;
+
+  border-color:
+    rgba(255, 194, 103, 0.65) !important;
+
+  text-shadow:
+    0 0 8px rgba(240, 166, 60, 0.35) !important;
+
+  box-shadow:
+    none !important;
+}
+
+.btn-primary:active {
+  background:
+    transparent !important;
+
+  color:
+    var(--amber-dim) !important;
+
+  border-color:
+    rgba(201, 143, 46, 0.75) !important;
+
+  text-shadow:
+    none !important;
+
+  transform:
+    translateY(1px);
+}
+
+.btn-primary:focus-visible {
+  outline:
+    2px solid #f0a63c;
+
+  outline-offset:
+    2px;
+}
+
+/* ===== SECONDARY BUTTONS ===== */
+
+.btn-secondary,
+.btn-outline-secondary {
+  background:
+    transparent !important;
+
+  color:
+    var(--text) !important;
+
+  border:
+    1px solid var(--border) !important;
+
+  border-radius:
+    3px !important;
+
+  font-family:
+    "IBM Plex Mono",
+    ui-monospace,
+    Menlo,
+    Consolas,
+    monospace !important;
+
+  font-size:
+    0.78rem !important;
+
+  text-transform:
+    uppercase !important;
+
+  letter-spacing:
+    0.06em !important;
+}
+
+.btn-secondary:hover,
+.btn-outline-secondary:hover {
+  background:
+    transparent !important;
+
+  border-color:
+    var(--border-strong) !important;
+
+  color:
+    var(--amber-bright) !important;
+}
+
+.btn-secondary:active,
+.btn-outline-secondary:active {
+  background:
+    transparent !important;
+
+  border-color:
+    rgba(201, 143, 46, 0.75) !important;
+
+  color:
+    var(--amber-dim) !important;
+
+  transform:
+    translateY(1px);
+}
+
+.btn-secondary:focus-visible,
+.btn-outline-secondary:focus-visible {
+  outline:
+    2px solid #f0a63c;
+
+  outline-offset:
+    2px;
+}
+
+/* ===== INPUTS ===== */
+
+.form-control,
+.form-select,
+input,
+textarea,
+select {
+  background:
+    #120e08 !important;
+
+  color:
+    var(--text) !important;
+
+  border:
+    1px solid rgba(240, 166, 60, 0.16) !important;
+
+  border-radius:
+    3px !important;
+
+  font-family:
+    "IBM Plex Mono",
+    ui-monospace,
+    Menlo,
+    Consolas,
+    monospace !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  background:
+    #171109 !important;
+
+  color:
+    var(--text-strong) !important;
+
+  border-color:
+    rgba(240, 166, 60, 0.55) !important;
+
+  box-shadow:
+    0 0 0 0.12rem rgba(240, 166, 60, 0.12) !important;
+}
+
+/* ===== PLACEHOLDERS ===== */
+
+::placeholder {
+  color:
+    #8b7a60 !important;
+
+  opacity:
+    1 !important;
+}
+
+/* ===== TABLES ===== */
+
+table {
+  color:
+    var(--text) !important;
+}
+
+.table {
+  --bs-table-bg:
+    transparent !important;
+
+  --bs-table-color:
+    var(--text) !important;
+
+  --bs-table-border-color:
+    rgba(240, 166, 60, 0.16) !important;
+}
+
+.table > :not(caption) > * > * {
+  background:
+    transparent !important;
+
+  color:
+    var(--text) !important;
+
+  border-color:
+    rgba(240, 166, 60, 0.16) !important;
+}
+
+/* ===== DIVIDERS ===== */
+
+hr {
+  border: 0 !important;
+
+  height: 1px !important;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(240, 166, 60, 0) 0,
+      rgba(240, 166, 60, 0.38) 48px,
+      rgba(240, 166, 60, 0.38) calc(100% - 48px),
+      rgba(240, 166, 60, 0) 100%
+    ) !important;
+
+  opacity:
+    1 !important;
+}
+
+/* ===== DROPDOWNS ===== */
+
+.dropdown-menu {
+  background:
+    #120e08 !important;
+
+  border:
+    1px solid var(--border) !important;
+
+  box-shadow:
+    0 8px 28px rgba(11, 9, 6, 0.72) !important;
+}
+
+.dropdown-item {
+  color:
+    var(--text) !important;
+}
+
+.dropdown-item:hover {
+  background:
+    rgba(240, 166, 60, 0.08) !important;
+
+  color:
+    var(--amber-bright) !important;
+}
+
+/* ===== MODALS ===== */
+
+.modal-content {
+  background:
+    #120e08 !important;
+
+  color:
+    var(--text) !important;
+
+  border:
+    1px solid var(--border) !important;
+
+  box-shadow:
+    0 0 35px rgba(240, 166, 60, 0.05) !important;
+}
+
+/* ===== FOOTER ===== */
+
+footer {
+  color:
+    var(--text-muted) !important;
+}
+
+/* ===== SCROLLBAR ===== */
+
+::-webkit-scrollbar {
+  width:
+    9px;
+
+  height:
+    9px;
+}
+
+::-webkit-scrollbar-track {
+  background:
+    #0b0906;
+}
+
+::-webkit-scrollbar-thumb {
+  background:
+    #241c12;
+
+  border:
+    1px solid #6b5c47;
+
+  border-radius:
+    3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background:
+    #33281a;
+}
+
+/* ===== SELECTION ===== */
+
+::selection {
+  background:
+    rgba(240, 166, 60, 0.28);
+
+  color:
+    #f2e7d5;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 768px) {
+
+  body {
+    font-size:
+      14px;
+  }
+
+  h1 {
+    font-size:
+      1.65rem !important;
+  }
+
+  .card,
+  .shadow-box {
+    border-radius:
+      3px !important;
+  }
+
+  body::before {
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(240, 166, 60, 0.022) 0px,
+        rgba(240, 166, 60, 0.022) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+  }
+}
