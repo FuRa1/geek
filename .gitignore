@@ -1,8 +1,49 @@
+# ---------------------------------------------------------------------------
+# /opt/home-infra/.gitignore
+# Configuration is versioned. Secrets, runtime state and vendor output are not.
+# ---------------------------------------------------------------------------
+
+# Secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Runtime state (bind mounts under DATA_ROOT)
+data/
+backups/
+logs/
+restore-*.log
+
+# Vendor output — regenerate with scripts/init-guac-schema.sh
+guacamole/schema/
+
+# Database dumps
+*.sql
+*.sql.gz
+*.dump
+!postgres/initdb/*.sql
+
+# Local compose tweaks that should not follow the stack to another host
+docker-compose.override.yml
+compose.override.yml
+
+# Keys and certificates of any kind
+*.key
+*.pem
+*.crt
+*.cert
+*.privkey
+*.wg
+id_rsa*
+id_ecdsa*
+id_ed25519*
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.swp
+*.swo
 *~
-.gitconfig
-.idea
-bower_components/
-bower_components
-node_modules
-node_modules/
-npm-debug.log
+.DS_Store
+Thumbs.db

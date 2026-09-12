@@ -1,0 +1,13 @@
+# This repo is edited on Windows and executed on Ubuntu. Everything text
+# checks out with LF endings — a CRLF shebang makes a script fail on the
+# host with "bad interpreter: /usr/bin/env bash^M", which is a confusing
+# way to discover a line-ending problem.
+* text=auto eol=lf
+
+*.sh      text eol=lf
+*.yml     text eol=lf
+*.sql     text eol=lf
+*.css     text eol=lf
+*.md      text eol=lf
+Caddyfile text eol=lf
+.env.example text eol=lf
