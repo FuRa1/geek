@@ -103,6 +103,26 @@
 	}
 }
 
+# OpenAI-compatible API for coding clients. Authentication is performed by
+# LiteLLM with a bearer API key; do not put Authentik forward_auth here because
+# VS Code clients cannot complete a browser redirect during API calls.
+{$CADDY_DOMAIN}:8444 {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		-Server
+	}
+
+	reverse_proxy ai-proxy:4000 {
+		transport http {
+			read_timeout 12h
+			write_timeout 12h
+		}
+	}
+}
+
 # ---------------------------------------------------------------------------
 # Uptime Kuma
 #

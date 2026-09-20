@@ -30,6 +30,7 @@ services:
       - "80:80"     # required for the ACME HTTP-01 challenge + HTTPS redirect
       - "443:443"
       - "8443:8443" # Open WebUI on a dedicated HTTPS listener
+      - "8444:8444" # OpenAI-compatible API for remote coding clients
     environment:
       CADDY_DOMAIN: ${CADDY_DOMAIN}
       CADDY_EMAIL: ${CADDY_EMAIL}
@@ -222,6 +223,31 @@ services:
       - ${DATA_ROOT}/open-webui:/app/backend/data
     networks:
       - edge
+
+  # --- Authenticated remote coding API ------------------------------------
+  # This is the only public-facing model endpoint. Ollama itself remains
+  # private; LiteLLM enforces a bearer API key before forwarding to it.
+  ai-proxy:
+    <<: *restart
+    image: docker.litellm.ai/berriai/litellm:${LITELLM_TAG}
+    container_name: home-infra-ai-proxy
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    environment:
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+      TZ: ${TZ}
+    volumes:
+      - ./ai-proxy/config.yaml:/app/config.yaml:ro
+    expose:
+      - "4000"
+    networks:
+      - edge
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4000/health/liveliness >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   # --- Existing Uptime Kuma -------------------------------------------------
   # Deliberately NOT defined here. Kuma already runs as a standalone container

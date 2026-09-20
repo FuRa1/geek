@@ -1,0 +1,11 @@
+# OpenAI-compatible gateway for VS Code clients.
+# The client must send: Authorization: Bearer <LITELLM_MASTER_KEY>
+
+model_list:
+  - model_name: qwen3-coder:latest
+    litellm_params:
+      model: ollama/qwen3-coder:latest
+      api_base: os.environ/OLLAMA_BASE_URL
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
