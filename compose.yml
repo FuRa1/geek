@@ -200,6 +200,27 @@ services:
       guacd:
         condition: service_started
 
+  # --- AI web UI ------------------------------------------------------------
+  # Open WebUI is reachable only through Caddy at /ai/. Ollama stays on the
+  # private Tailscale network and is never published by this Compose project.
+  open-webui:
+    <<: *restart
+    image: ghcr.io/open-webui/open-webui:${OPEN_WEBUI_TAG}
+    container_name: home-infra-open-webui
+    environment:
+      WEBUI_URL: ${OPEN_WEBUI_URL}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+      ENABLE_COMPRESSION_MIDDLEWARE: "false"
+      WEBUI_SESSION_COOKIE_SECURE: "true"
+      WEBUI_AUTH_COOKIE_SECURE: "true"
+      WEBUI_SESSION_COOKIE_SAME_SITE: lax
+      ENABLE_WEBSOCKET_SUPPORT: "true"
+      TZ: ${TZ}
+    volumes:
+      - ${DATA_ROOT}/open-webui:/app/backend/data
+    networks:
+      - edge
+
   # --- Existing Uptime Kuma -------------------------------------------------
   # Deliberately NOT defined here. Kuma already runs as a standalone container
   # on the Lenovo with its own volume and Telegram alerting; adopting it into
