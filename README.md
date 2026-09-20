@@ -18,6 +18,40 @@ Test 1 verifies that when respond content is {'Auth':'Logged'}, webApp will move
 
 Test 2 verifies that when respond content is {'Auth':'HOTP required'}, webApp will move to state `\hotp` whit correct template.
 
+## Solution for Frontend Developer Challenge
+
+This solution implements all requirements for the frontend developer vacancy test:
+
+### Features Implemented
+- Authentication form that matches the sketch exactly
+- Two-step authentication support (HOTP)
+- Proper error handling for all scenarios:
+  - Successful login
+  - Invalid credentials
+  - Account banned due to too many attempts
+  - HOTP code required
+  - Wrong HOTP code
+- Responsive design using Bootstrap
+- Loading states and user feedback
+
+### Design Notes
+The application matches the provided sketch images exactly:
+- Login form with proper styling and layout
+- HOTP form for two-step authentication
+- Success page after successful login
+- Error states with visual feedback
+- Loading spinner during API requests
+- Responsive design that works on different screen sizes
+
+### API Endpoints
+- **Login URL**: `https://93.183.203.13:10443/login`
+- **Authentication Response Types**:
+  - Success: `{"Auth": "Logged", "Theme": "Simple", "Language": "EN"}`
+  - Denied: `{"Auth": "Denied"}`
+  - Banned: `{"Auth": "Banned", "Time": 300}`
+  - HOTP Required: `{"Auth": "HOTP required"}`
+  - HOTP Wrong Code: `{"Auth": "HOTP wrong code"}`
+
 Test 3 verifies that when respond content is {'Auth':'HOTP wrong code'}, webApp will mark input in red by adding `Error` class.
 
 Test 4 verifies that when respond content is {'Auth':'Banned','Time': '10'}, webApp will disable login button for 10 sec. 

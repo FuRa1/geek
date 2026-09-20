@@ -8,11 +8,12 @@
 
     function Login($http) {
 
-        var reqObj ={};
-
-         return function http(userLogin, userPassword, hotpPassword) {
+        return function http(userLogin, userPassword, hotpPassword) {
 
             var url = 'https://93.183.203.13:10443/login';
+
+            // Create a new request object for each call
+            var reqObj = {};
 
             if(userLogin && userPassword){              //check value from input fields, to work from different states,
                 reqObj.Login = userLogin;               //allow to not lose login && password, and save them in factory
@@ -22,26 +23,32 @@
             if(hotpPassword){
                 reqObj.Hotp = hotpPassword;             //check hotp pass value, for /authentication state
             }                                           //allow to not send Hotp:'undefined' in first request
-            console.log(reqObj);
+            
+            console.log('Request object:', reqObj);
 
             var parameter = JSON.stringify(reqObj);     //restrict request data to JSON format
-            console.log(parameter);
+            console.log('Request parameter:', parameter);
+            
+            // Set proper headers for the request
             var req = {
                 method: 'POST',
                 url: url,
                 dataType: "json",
                 data: parameter,
                 headers:{
-                    'Content-Type': JSON,
-                    'Access-Control-Allow-Origin': "*"
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
             };
 
             return $http(req
             ).then(function successCallback(response) {
+                console.log('Success response:', response.data);
                 return response;
             }, function errorCallback(response) {
-                console.log(response);
+                console.log('Error response:', response);
+                // Return a rejected promise with the error data for proper handling
+                return Promise.reject(response);
             });
         }
 

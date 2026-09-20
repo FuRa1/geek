@@ -45,18 +45,40 @@
                     var responseType = _.camelCase(data.Auth);   //restrict Auth: 'value' to camelCase for  callbacksMethods Object
 
 
-                    console.log(responseType);
+                    console.log('Response type:', responseType);
 
-                    callbacksMethods[responseType](data);       //run callbacksMethods method depending on response Auth:'value'
+                    // Handle different authentication responses
+                    if (responseType === 'logged') {
+                        // Successful login - transition to success state
+                        callbacksMethods[responseType](data);
+                    } else if (responseType === 'banned') {
+                        // Account banned - show ban message and disable login for specified time
+                        callbacksMethods[responseType](data);
+                    } else if (responseType === 'denied') {
+                        // Invalid credentials - mark fields as invalid
+                        callbacksMethods[responseType](data);
+                    } else if (responseType === 'hotpRequired') {
+                        // HOTP required - transition to HOTP state
+                        callbacksMethods[responseType](data);
+                    } else if (responseType === 'hotpWrongCode') {
+                        // Wrong HOTP code - mark field as invalid
+                        callbacksMethods[responseType](data);
+                    } else {
+                        // Unknown response - log error
+                        console.log('Unknown response type:', responseType);
+                        vm.isLoading = false;
+                    }
 
                 })
                 .catch(function (e) {
-                    console.log(e);
+                    console.log('HTTP Error:', e);
+                    vm.isLoading = false;
                 })
         }
 
-        function logged() {
-            console.log('success state');
+        function logged(data) {
+            console.log('Success state');
+            // Successful login - transition to success state
             state.transitionTo('success', {});   // if response Auth:'Logged', go to state Success.
         }
 
@@ -76,6 +98,7 @@
 
         function hotpRequired() {
             console.log('hotpRequired state');
+            // HOTP required - transition to HOTP state
             state.transitionTo('hotp', {});     //if response Auth:'HOTP required', go to state hotp.
         }
 

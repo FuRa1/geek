@@ -1,15 +1,15 @@
 <div class="row center-block">
     <div class="col-xs-12 info">
-        <P>
+        <p>
         Two step authentication required <br>
         for this user login:
-        </P>
+        </p>
     </div>
 </div>
 <div class="row center-block">
     <form ng-submit="ht.submit()" class="col-xs-12">
         <div class="form-group">
-            <input type="text" ng-class="{'error': ht.denied }" class="form-control center-block" id="loginInput"
+            <input type="text" ng-class="{'error': ht.denied }" class="form-control center-block" id="hotpInput"
                    placeholder="Enter two step auth code"
                    ng-model="ht.hotp" ng-click="ht.denied=false">
         </div>
