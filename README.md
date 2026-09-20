@@ -1,8 +1,20 @@
 # home-infra
 
-Portable, security-hardened web-control stack. Runs today on the Lenovo L590
-(Nazaré), designed to move to the HP T640 (Bulgaria) by archive-and-restore
-rather than by rebuild.
+Portable web-control stack intended for the Lenovo L590 (Nazaré), with a future
+move to the HP T640 (Bulgaria). Configuration exists; deployment verification is
+tracked in two maintained plans:
+
+- [Primary implementation plan (Russian)](docs/IMPLEMENTATION_PLAN.md)
+- [Technical implementation guide (English)](docs/reference/IASC-VSCode-Chat-Guide.md)
+
+Update both together as stages are verified. Next: finish bootstrap inventory
+on Lenovo, then deploy and test one layer at a time.
+
+## Remote-only administration
+
+Lenovo is administered only through SSH. Clone, update, inspect and run the
+stack on Lenovo from an SSH session; the workstation is used only as the SSH
+client and for reviewing Git changes.
 
 ```
 Internet ──443──► Caddy ──forward_auth──► authentik ──► Guacamole ──► RDP/SSH
@@ -12,6 +24,10 @@ Deploy to `/opt/home-infra`, not a home directory — nothing here depends on
 the path, but keeping it off `/home` is what makes the host replaceable.
 
 ## Quick start
+
+These are full-stack reference commands for a prepared host after the relevant
+staged checks in the implementation plan. They are not the current bootstrap step.
+Compose currently publishes 80/443; the plan tracks the intended 443-only decision.
 
 ```bash
 ./scripts/init-secrets.sh        # .env with random secrets, mode 600
@@ -74,6 +90,6 @@ published under this hostname anyway. See
 Its status-page themes live in [`kuma/themes/`](kuma/) — paste-in Custom CSS,
 versioned here because they are hand-written and easy to lose.
 
-**Open WebUI / Ollama** is Phase 2. Ollama stays bound to the LAN and
+**Open WebUI / Ollama** is stage 6 of the implementation plan. Ollama stays on the LAN and
 Tailscale; if a web UI goes in front of it, it goes behind the same
 `forward_auth` gate as everything else.

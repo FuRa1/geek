@@ -1,5 +1,19 @@
 # Deployment
 
+This is the existing full-stack runbook. Follow the
+[implementation plan](IMPLEMENTATION_PLAN.md) and its
+[technical version](reference/IASC-VSCode-Chat-Guide.md) for stage order and status.
+Host execution has not been verified by the plan revision. Local stages 2–3 need
+selective startup; stage 4 tests an isolated HTTPS endpoint, and working apps are
+published after stage 5 verifies 2FA. The current 80/443 configuration is pending
+the plan's 443-only decision. Review backup/restore and migration helpers before
+stages 8–10; the current migration helper stops Lenovo before target validation.
+
+All deployment and lifecycle operations on Lenovo are SSH-only. Connect from the
+workstation and run clone/pull, `.env`, runtime data, Docker commands, settings,
+backups, restores and updates inside that SSH session. Running the stack locally
+is not part of the supported workflow.
+
 ## Prerequisites on the host
 
 - Ubuntu 24.04, Docker Engine + Compose v2 (`docker compose version` ≥ 2.20)
@@ -14,6 +28,8 @@ it every 60 days, and Caddy answers it with a redirect to HTTPS.
 ## First deployment (Lenovo L590)
 
 ```bash
+ssh user@lenovo
+
 sudo mkdir -p /opt/home-infra
 sudo chown "$USER":"$USER" /opt/home-infra
 git clone <private-repo> /opt/home-infra

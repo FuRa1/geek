@@ -1,288 +1,135 @@
-# Home Infrastructure as Code — VS Code Claude Extension Chat Guide
+# Home Infrastructure as Code — Technical Implementation Guide
 
-**Project:** Infra (Home Infrastructure) | **Status:** Building web-control stack (Phase 1)  
-**Primary Host:** Lenovo L590 (Ubuntu 24.04) → Future: HP T640  
-**Main Repo:** Private Git (IaC configs only, no secrets)
+Synchronized: 2026-09-13. Repository: `geek`.
 
----
+## Two maintained versions
 
-## 🎯 Project Overview
+This is the existing English technical plan, revised against the supplied plan
+and repository. The [Russian implementation plan](../IMPLEMENTATION_PLAN.md)
+is the primary roadmap. Update both in the same change whenever stage order,
+decisions, status or verification results change. Keep stage numbers and checklists
+aligned. The roadmap governs order/status; files and host inspection establish
+actual configuration. Files present does not mean deployed.
 
-You're building a **portable, security-hardened web-control infrastructure** that can migrate from Lenovo L590 → HP T640 without architectural changes.
+## Baseline to verify on the hosts
 
-### Architecture
-```
-Internet → HTTPS 443 (Caddy)
-    ↓
-Authentik + 2FA
-    ├─ Guacamole (RDP/SSH to internal nodes)
-    ├─ Uptime Kuma (monitoring dashboard)
-    └─ [Later] Open WebUI (Ollama interface)
-```
+These facts come from the original guide and supplied plan, not live inspection:
 
-### Key Constraint
-- **NO secrets in Git:** compose.yml, Caddyfile, scripts → YES  
-- **NO secrets in Git:** .env, API keys, TOTP, private keys → NEVER  
-- **Infrastructure → /opt/home-infra** (portable, not tied to /home/akeya)
+| Node | Role and recorded network details |
+|---|---|
+| MEO FiberGateway, Nazaré | Upstream gateway, LAN `192.168.1.0/24` |
+| Archer AX12 | LAN `192.168.0.1/24`; working WireGuard `10.5.5.1/32`, local port 51820, external `moralmachine.dynip.sapo.pt:42820` |
+| Lenovo L590 | Ubuntu 24.04; temporary infra host; LAN `192.168.0.251`, Tailscale `100.70.34.82`; Docker, Kuma, Tailscale, SSH |
+| MoralMachine | Windows, RTX 3090; LAN `192.168.0.129`, Tailscale `100.84.255.108`; RDP, SSH, Ollama, Wake-on-LAN |
+| HP T640, Bulgaria | Future primary 24/7 host; readiness unverified |
 
----
+Preserve Kuma data, monitors and Telegram alerts, AX12 WireGuard, Tailscale,
+Ollama and SSH/RDP. Inspect and reuse existing containers/configuration first.
+Explain changes and impact before modifying data, volumes, working containers,
+firewall, routing, VPN or Internet exposure. Safe reversible work can proceed
+normally. One layer → test → update both plans → separate commit → next layer.
 
-## 📋 Current Baseline
+All deployment and lifecycle operations are SSH-only. Clone/pull the repository,
+create `.env`, run inventory, Docker, configuration, backup, restore, updates and
+migration inside an SSH session on the target host. The workstation is only the
+SSH client and Git review surface; running the stack locally is not a supported
+workflow.
 
-### Portugal Site (Nazaré)
-- **Gateway:** MEO FiberGateway (LAN: 192.168.1.0/24)
-- **Router:** TP-Link Archer AX12 (LAN: 192.168.0.1/24)
-  - WireGuard Server: 10.5.5.1/32, Port 51820
-  - External: moralmachine.dynip.sapo.pt:42820
-- **MoralMachine** (Windows Desktop, RTX 3090)
-  - LAN: 192.168.0.129 | Tailscale: 100.84.255.108
-  - Services: RDP (3389), SSH (22), Ollama (11434)
-- **Lenovo L590** (Ubuntu 24.04) ← **Your IaC Host**
-  - LAN: 192.168.0.251 | Tailscale: 100.70.34.82
-  - Services: Docker, Uptime Kuma, Tailscale
+## Repository inventory verified on 2026-09-13
 
-### Bulgaria Site (Future)
-- **HP T640** (Ubuntu 24 LTS) ← Future main 24/7 host
-  - Status: Physical setup only; needs IaC migration
+| Existing path | Implementation and remaining work |
+|---|---|
+| `compose.yml` | Caddy, PostgreSQL, Redis, Authentik server/worker, Guacamole, guacd; host deployment unverified |
+| `.env.example`, `.gitignore` | Templates and exclusions exist; verify host secrets/runtime locations |
+| `caddy/Caddyfile` | Authentik at `/`, Guacamole at `/guacamole/` behind `forward_auth` |
+| `postgres/initdb/` | PostgreSQL-backed Guacamole; generate schema with `scripts/init-guac-schema.sh` before fresh initialization |
+| `authentik/`, `guacamole/` | Setup notes exist; no need to invent `config.yml` or `user-mapping.xml` |
+| `kuma/` | Standalone service notes and CSS; not managed by this Compose |
+| `scripts/` | Secrets, schema, backup, restore and migration helpers; execution unverified |
+| `docs/`, `README.md` | Architecture, deployment, secrets, troubleshooting and plans |
 
-### Existing Services (DO NOT BREAK)
-- **Uptime Kuma** on Lenovo (docker, port 3001, Telegram alerts)
-- **WireGuard** AX12 (port 51820, working VPN to MoralMachine)
-- **Tailscale** network (100.70.x.x, MagicDNS enabled)
+`open-webui/` is absent. `data/` and `backups/` are ignored; `backups/` is absent
+locally and created by the backup script. `/opt/home-infra` on Lenovo is unverified.
+Keep deployment independent of `/home/akeya`.
 
----
+## Reconciled design decisions
 
-## 🔧 Phase 1: Web-Control Stack (Current)
+- Target: Internet → HTTPS 443 → Caddy with Authentik/2FA → Guacamole,
+  Open WebUI and existing Kuma. Guacamole reaches RDP/SSH; WebUI reaches private
+  Ollama at `http://100.84.255.108:11434` or `http://moralmachine:11434`.
+- Current Compose publishes 80/443 and deployment assumes HTTP-01/redirect.
+  Stage 4 must validate certificate issuance/renewal for 443-only or document
+  an explicit port-80 exception. Inspect both routers, DNS and NAT; preserve VPN.
+- Keep stages 4 (external HTTPS) and 5 (Authentik): stage 4 uses an isolated Caddy
+  test response; publish working applications after stage 5 verifies 2FA.
+- Caddy currently depends on Authentik; Guacamole has no host port. Stages 2–3
+  need reviewed private access and selective startup configuration. Full-stack
+  startup is not the staged bootstrap procedure.
+- Preserve current `/` and `/guacamole/` routing and Guacamole's separate login.
+  Select hostnames/routes for WebUI and Kuma first. The old `/auth/`, unprotected
+  Guacamole and `/kuma/` examples have been removed from this guide.
+- Proxy to the existing Kuma after inventory and backup; preserve ownership,
+  volumes, history, monitors and alerts. Decide dashboard/status-page access
+  separately. Do not create a second Kuma container.
+- Git stores configuration; backups store persistent data; secrets have separate
+  secure storage. Never commit `.env`, passwords, API/TOTP secrets, private keys
+  or database data. Current archives include plaintext `.env`: encrypt them;
+  separate secret recovery remains to be documented.
+- Back up existing data before changes; stage 8 completes the general strategy.
+  Restore secrets/data and databases before starting applications.
+- The migration helper stops Lenovo before target validation. Adapt the procedure
+  for isolated target checks, a consistent final backup, cutover and rollback
+  before stage 10. Preserve the source until target acceptance.
 
-### Step 1: Folder Structure
-```bash
-/opt/home-infra/
-├── compose.yml              # Main Docker Compose (portable)
-├── .env.example             # Template ONLY—never commit real values
-├── .gitignore               # Keep secrets out
-├── caddy/
-│   ├── Caddyfile           # Reverse proxy config
-│   └── README.md           # Caddy notes
-├── authentik/
-│   ├── config.yml          # Authentik setup template
-│   └── README.md
-├── guacamole/
-│   ├── user-mapping.xml    # Connection configs
-│   └── README.md
-├── kuma/
-│   └── README.md           # Kuma reference (existing)
-├── scripts/
-│   ├── init-secrets.sh     # Create .env from .env.example
-│   ├── backup.sh           # Data backup script
-│   └── migrate-to-t640.sh  # Future migration helper
-├── docs/
-│   ├── ARCHITECTURE.md     # System design
-│   ├── DEPLOYMENT.md       # How to deploy & migrate
-│   └── SECRETS.md          # Secret management strategy
-└── backups/                # Local backup directory (git-ignored)
-```
+## Shared stage checklist
 
-### Step 2: Key Files to Create
+- [ ] 1. Repository bootstrap
+- [ ] 2. Guacamole local
+- [ ] 3. Caddy local
+- [ ] 4. External HTTPS
+- [ ] 5. Authentik
+- [ ] 6. Open WebUI
+- [ ] 7. Kuma integration
+- [ ] 8. Backup / restore
+- [ ] 9. Reproducible deployment
+- [ ] 10. HP T640 migration
 
-#### **compose.yml** (Docker stack orchestration)
-- PostgreSQL (for Authentik & Guacamole data)
-- Authentik (auth + 2FA)
-- Caddy (reverse proxy, auto HTTPS)
-- Guacamole (web RDP/SSH)
-- Update Kuma reference (if integrating)
+### 1. Repository bootstrap — partially prepared
 
-#### **.env.example** (Template—never real secrets)
-```bash
-# Caddy
-CADDY_DOMAIN=control.moralmachine.dynip.sapo.pt
-CADDY_EMAIL=your-email@example.com
+- [x] Locate Compose, `.env.example`, `.gitignore`, README, docs and scripts.
+- [x] Reconcile the supplied plan and guide; define two maintained versions.
+- [ ] Through SSH inspect Lenovo: `/opt/home-infra`, Docker/Compose, containers, ownership,
+  volumes, networks, occupied ports and data locations without exposing secrets.
+- [ ] Verify secrets/data exclusions and runtime directory creation on the host.
+- [ ] Prepare and validate stage-2-only startup with private access and no public ports.
+- [ ] Review diff, record verification and make a separate stage commit.
 
-# Authentik
-AUTHENTIK_SECRET_KEY=CHANGE_ME
-AUTHENTIK_BOOTSTRAP_PASSWORD=CHANGE_ME
-AUTHENTIK_BOOTSTRAP_TOKEN=CHANGE_ME
+Do not proceed to Guacamole until bootstrap is complete.
 
-# PostgreSQL
-POSTGRES_USER=authentik
-POSTGRES_PASSWORD=CHANGE_ME
-POSTGRES_DB=authentik
+### 2–10. Acceptance criteria
 
-# Guacamole
-GUACAMOLE_MYSQL_USER=guacamole
-GUACAMOLE_MYSQL_PASSWORD=CHANGE_ME
+| Stage | Required verification |
+|---|---|
+| 2. Guacamole local | Reuse PostgreSQL/guacd/Guacamole; generate schema before fresh DB initialization; never delete an existing DB to rerun initialization. Private UI, changed default password, MoralMachine RDP/SSH, preferably Lenovo SSH, persistence after restart; Kuma unaffected. |
+| 3. Caddy local | Test routing, headers, WebSocket, Docker networking and restart in a trusted network using a stage-specific configuration independent of Authentik; preserve the final `forward_auth` configuration. |
+| 4. External HTTPS | After local checks, inspect MEO/AX12 NAT and DNS; resolve 443 vs 80/443, test certificate issuance/renewal and isolated HTTPS over mobile Internet. No direct 22/3389/11434/3001/8080/PostgreSQL exposure. Record `docs/NETWORK.md`. |
+| 5. Authentik | Configure provider/application/outpost, required 2FA and TOTP recovery outside the host; WebAuthn/passkeys later. Test anonymous, allowed and denied users, proxy bypass prevention and account recovery before publishing working Guacamole. |
+| 6. Open WebUI | Add to infra host, select hostname and Authentik integration; test private Ollama connectivity from container, models, streaming, persistence and offline MoralMachine behavior. Browser access without a VPN client; never publish 11434. |
+| 7. Kuma integration | Inventory container name, Compose ownership, volumes, database/data location, networks and monitors. Back up before changes; verify proxy/auth, preserved history, monitors, alerts and status-page policy without recreating Kuma. |
+| 8. Backup / restore | Review/reuse helpers; document configuration, separate secrets, PostgreSQL, Kuma, WebUI and other persistent data, consistency, encryption, off-host storage, schedule and retention in `docs/BACKUP_RESTORE.md`. Restore on clean isolated Ubuntu and inspect errors. Coverage of standalone Kuma/future WebUI is not established. |
+| 9. Reproducible deployment | Verify over SSH: clone → secrets → schema or restore → startup → acceptance on a clean host. Document fresh install/restore separately, manual steps, image versions and dependencies in README/DEPLOYMENT; check compatibility before deployment. |
+| 10. HP T640 migration | Prepare Ubuntu/Docker and `/opt/home-infra`; clone, recover secrets/data, validate internally in isolation. Plan write quiescence and final backup, cut over HTTPS after readiness, test the whole stack, retain Lenovo/data for rollback until acceptance. Record `docs/MIGRATION_T640.md`. |
 
-# (Others as needed)
-```
+## Documentation and next action
 
-#### **Caddyfile** (Reverse proxy template)
-```
-{$CADDY_DOMAIN} {
-    encode gzip
-    
-    # Authentik
-    handle /auth/* {
-        reverse_proxy authentik:9000
-    }
-    
-    # Guacamole
-    handle /guacamole/* {
-        reverse_proxy guacamole:8080
-    }
-    
-    # Uptime Kuma (optional integration)
-    handle /kuma/* {
-        reverse_proxy uptime-kuma:3001
-    }
-}
-```
+Use [ARCHITECTURE](../ARCHITECTURE.md), [DEPLOYMENT](../DEPLOYMENT.md) and
+[SECRETS](../SECRETS.md) for implementation details, subject to the staged plan.
+Update them and README when behavior changes. Create NETWORK, BACKUP_RESTORE and
+MIGRATION_T640 when verified information exists, without empty placeholders.
 
-### Step 3: Deployment Workflow
+For each completed stage, record date, environment, result and limitations in
+both versions before checking its box. Files alone do not prove deployment,
+backup or migration. `VSCode-Chat-Prompts.md` is a prompt library, not a third plan.
 
-**Initial Setup (Lenovo):**
-```bash
-# 1. Create /opt/home-infra from Git
-git clone <your-private-repo> /opt/home-infra
-
-# 2. Initialize secrets
-cd /opt/home-infra
-./scripts/init-secrets.sh  # Creates .env from .env.example
-
-# 3. Spin up stack
-docker-compose up -d
-
-# 4. Configure Authentik (WebUI setup)
-# → Set up admin user, TOTP, password policies
-
-# 5. Configure Guacamole
-# → Add RDP connection to MoralMachine (192.168.0.129:3389)
-# → Add SSH connection (100.84.255.108:22)
-
-# 6. Test: https://control.moralmachine.dynip.sapo.pt/auth/
-```
-
-**Migration to T640 (Later):**
-```bash
-# 1. Backup Lenovo data
-./scripts/backup.sh
-
-# 2. Transfer /opt/home-infra + backups to T640
-# 3. Restore data from backup
-# 4. Update .env if needed (new IPs, domain changes)
-# 5. Spin up on T640
-```
-
----
-
-## 🔐 Security Principles
-
-1. **Internet:** TCP 443 only (HTTPS via Caddy + Let's Encrypt)
-2. **Authentication:** Authentik (passkeys + TOTP backup)
-3. **Internal Access:** Guacamole proxies RDP/SSH (no direct ports open)
-4. **Secrets Management:**
-   - `.env` → Git-ignored, created at deployment
-   - API keys, TOTP secrets → Stored in `.env` only
-   - Private keys (WireGuard, SSH) → Not in repo
-5. **Managed MacBook:** Use web portal (HTTPS → Guacamole → RDP) only
-
----
-
-## 🛠️ Common Development Tasks
-
-### Add a New Service
-1. **Define compose.yml service** (with templates for .env vars)
-2. **Create service-specific config folder** (caddy/, authentik/, etc.)
-3. **Update Caddyfile** for reverse-proxy routing
-4. **Update .env.example** with new secrets
-5. **Document in docs/ARCHITECTURE.md**
-6. **Commit to Git** (no secrets)
-7. **Test on Lenovo** before deploying elsewhere
-
-### Backup & Restore
-```bash
-# Backup
-./scripts/backup.sh
-# Creates timestamped archive of PostgreSQL, Guacamole config, etc.
-
-# Restore (on T640)
-tar xzf backups/home-infra-2026-09-12.tar.gz -C /opt/home-infra/
-```
-
-### Monitor Health
-```bash
-# Via Tailscale MagicDNS:
-curl http://akeya-thinkpad-l590:3001/status/home  # Uptime Kuma
-curl http://100.84.255.108:11434/api/tags         # Ollama health
-```
-
----
-
-## 📝 Development Checklist (Phase 1)
-
-- [ ] Clone private repo to /opt/home-infra
-- [ ] Set up .env.example template
-- [ ] Create compose.yml with PostgreSQL, Authentik, Caddy, Guacamole
-- [ ] Configure Caddyfile with HTTPS + passthrough
-- [ ] Spin up stack on Lenovo; test services
-- [ ] Configure Authentik (admin user, 2FA, policies)
-- [ ] Add RDP/SSH connections in Guacamole
-- [ ] Test web access: https://control.moralmachine.dynip.sapo.pt
-- [ ] Test login flow: Authentik → TOTP → Guacamole → RDP
-- [ ] Set up backup/restore scripts
-- [ ] Document architecture in docs/ARCHITECTURE.md
-- [ ] Create migration plan for T640
-
----
-
-## 🚀 When Using Claude in VS Code
-
-### File Context
-When you ask Claude to help with a file (Caddyfile, compose.yml, scripts), it will understand:
-- **Your baseline:** Portugal site, Lenovo host, existing Uptime Kuma
-- **Constraints:** No secrets in repo; portable stack; migration-ready
-- **Architecture:** Internet → Caddy → Authentik → Guacamole/Kuma/WebUI
-
-### Example Prompts
-- *"Review my compose.yml—does it support data portability to T640?"*
-- *"Generate a safe Caddyfile for control.moralmachine.dynip.sapo.pt that routes to Authentik and Guacamole."*
-- *"Create a .env.example template for the services we're using."*
-- *"Write a backup script that preserves PostgreSQL and Guacamole config."*
-- *"Check my Guacamole user-mapping.xml—is it secure?"*
-
-### Red Flags Claude Will Avoid
-- **Never storing secrets** in compose.yml, Caddyfile, or scripts
-- **Never hardcoding IPs** that differ between Lenovo and T640
-- **Never exposing** SSH (22), RDP (3389), Ollama (11434) directly to Internet
-- **Never modifying** existing AX12 WireGuard without explicit approval
-
----
-
-## 📚 Reference Documents (Create in Git Repo)
-
-1. **ARCHITECTURE.md** — System design, data flow, security model
-2. **DEPLOYMENT.md** — Step-by-step setup for Lenovo; migration strategy for T640
-3. **SECRETS.md** — How to initialize .env; what each secret is for; backup strategy
-4. **TROUBLESHOOTING.md** — Common issues (port conflicts, DNS, Tailscale routing)
-5. **.gitignore** — Template to keep secrets safe
-
----
-
-## 🔗 Links & References
-
-- **Docker Compose:** https://docs.docker.com/compose/
-- **Caddy:** https://caddyserver.com/docs/caddyfile
-- **Authentik:** https://goauthentik.io/docs/
-- **Apache Guacamole:** https://guacamole.apache.org/doc/gug/
-- **Uptime Kuma:** https://docs.uptime.kuma.pet/
-- **Your Baseline:** See "Infra" project instructions above
-
----
-
-## 📞 Next Steps
-
-1. **Clone your private repo** to /opt/home-infra (create if needed)
-2. **Stage Step 1 files:** compose.yml, .env.example, Caddyfile template
-3. **Test locally on Lenovo**
-4. **Document learnings** as you build (Markdown in docs/)
-5. **Prepare migration plan** before T640 deployment
-
-Good luck! Your infrastructure will be repeatable and portable. 🚀
+Next: open an SSH session to Lenovo, finish the bootstrap inventory and prepare private selective startup.
+No host deployment or service changes were performed in this plan revision.
