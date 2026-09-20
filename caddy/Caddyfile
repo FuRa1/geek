@@ -72,9 +72,22 @@
 		}
 	}
 
-	# --- Open WebUI, behind authentik ----------------------------------------
-	# WEBUI_URL is configured with this same /ai/ prefix; do not strip it.
-	handle /ai/* {
+	# --- authentik itself ---------------------------------------------------
+	handle {
+		reverse_proxy authentik-server:9000
+	}
+}
+
+# Open WebUI gets its own HTTPS listener because the current frontend emits
+# root-relative assets and is not reliable behind a sub-path such as /ai/.
+{$CADDY_DOMAIN}:8443 {
+	encode zstd gzip
+
+	handle /outpost.goauthentik.io/* {
+		reverse_proxy authentik-server:9000
+	}
+
+	handle {
 		forward_auth authentik-server:9000 {
 			uri /outpost.goauthentik.io/auth/caddy
 			copy_headers X-authentik-username X-authentik-groups X-authentik-email X-authentik-name X-authentik-uid X-authentik-jwt X-authentik-meta-jwks X-authentik-meta-outpost X-authentik-meta-provider X-authentik-meta-app X-authentik-meta-version
@@ -87,11 +100,6 @@
 			}
 			flush_interval -1
 		}
-	}
-
-	# --- authentik itself ---------------------------------------------------
-	handle {
-		reverse_proxy authentik-server:9000
 	}
 }
 
